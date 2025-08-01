@@ -4,6 +4,9 @@ import pandas as pd
 import numpy as np
 
 def load_csvs_from_directory(directory):
+
+    #load all csv files from the directory and analyze them
+
     csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
     dataframes = []
     
@@ -31,15 +34,11 @@ def load_csvs_from_directory(directory):
 
 
 def analyze_each_table(table):
-
+    # Analyze each table to extract the table name and clean the data(remove empty rows and columns, add column names)
     first_row = table.iloc[0]
-    # print(table.headers())
     table_name = first_row.dropna().values[0] if first_row.notna().any() else "Unknown"
-
-    # Remove the first row (info/header)
     table_wo_info = table.iloc[1:]
 
-    # Drop rows where all columns are NaN
     filtered = table_wo_info.dropna(how='all').reset_index(drop=True)
 
     filtered.columns = filtered.iloc[0]
