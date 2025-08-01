@@ -169,8 +169,8 @@ def initPrisma():
     </GraphPadPrismFile>
     '''
     root = etree.XML(xml_string.encode('utf-8'), parser=etree.XMLParser(remove_blank_text=True))
-    tree = etree.ElementTree(root)
-    tree.write('D:/2.pzfx', encoding='UTF-8', xml_declaration=True)
+    # tree = etree.ElementTree(root)
+    # tree.write('D:/2.pzfx', encoding='UTF-8', xml_declaration=True)
     return root
 
 
