@@ -46,7 +46,7 @@ def analyze_each_table(table):
     filtered = filtered.dropna(axis=1, how='all')
 
     cols = list(filtered.columns)
-    cols[0] = "sunday"
+    cols[0] = "sunny"
     cols[1] = "classify"
     cols[2] = "type"
     filtered.columns = cols
@@ -54,5 +54,5 @@ def analyze_each_table(table):
 
 
 def execute_csv(dir):
-    dataframes = load_csvs_from_directory(dir)
+    return load_csvs_from_directory(dir)
 

@@ -160,14 +160,17 @@ def convert_progress(pzfx_path, csv_dir, output_path, update_progress):
         raise PermissionError(f"Permission denied: Cannot write to output directory {output_dir}")
 
     # Simulate conversion process
-    
+    inputData = execute_csv(csv_dir)
+
+    process1(inputData, ge)
+
+    process2(inputData)
     # total_steps = 100
     # for step in range(total_steps):
     #     # Simulate some processing time
     #     time.sleep(0.05)  # Simulating work being done
     #     update_progress(step + 1, total_steps)
 
-    execute_csv(csv_dir)
     
     # Finalize and save the output PZFX file
     # Here you would implement the actual logic to fill the PZFX with CSV data
