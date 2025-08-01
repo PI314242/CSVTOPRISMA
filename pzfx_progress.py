@@ -140,8 +140,6 @@ def get_table_structure_and_conditions(table_title):
     conditions = parse_table_conditions(table_title)
     return structure, conditions
 
-
-
 def convert_progress(pzfx_path, csv_dir, output_path, update_progress):
     """Convert CSV data to PZFX format with progress updates."""
     if not os.path.exists(pzfx_path):
