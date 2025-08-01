@@ -1,0 +1,6 @@
+PyQt6>=6.6.0
+pandas>=2.0.0
+lxml>=4.9.0
+fuzzywuzzy>=0.18.0
+python-Levenshtein>=0.20.0
+numpy>=1.21.0
