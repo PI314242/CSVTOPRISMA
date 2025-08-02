@@ -1,9 +1,11 @@
 import os
 import re
 import time
-import xml.etree.ElementTree as etree
-from common import check_file_permissions, check_directory_permissions
+from lxml import etree
+from common import check_file_permissions, check_directory_permissions, get_condition1_from_table_name, get_condition2_from_table_name, get_days
 from csv_progress import execute_csv
+from initpzfx import initPrismaTaste, initPrisma
+
 
 def parse_pzfx(pzfx_path):
     tree = etree.parse(pzfx_path)
@@ -140,31 +142,70 @@ def get_table_structure_and_conditions(table_title):
     conditions = parse_table_conditions(table_title)
     return structure, conditions
 
-def convert_progress(pzfx_path, csv_dir, output_path, update_progress):
-    """Convert CSV data to PZFX format with progress updates."""
-    if not os.path.exists(pzfx_path):
-        raise FileNotFoundError(f"PZFX file not found: {pzfx_path}")
+def writing_pzfx(inputData, fruitname):
+    days, unique_list = get_days(inputData)
+
+    root  = initPrisma()
+    ns = {'prism': 'http://graphpad.com/prism/Prism.htm'}
+
+    for table in root.xpath('.//prism:Table', namespaces=ns):
         
-    if not check_file_permissions(pzfx_path, 'r'):
-        raise PermissionError(f"Permission denied: Cannot read PZFX file {pzfx_path}")
-    
-    # Check output directory permissions
-    output_dir = os.path.dirname(output_path)
-    if output_dir and not os.path.exists(output_dir):
-        try:
-            os.makedirs(output_dir, exist_ok=True)
-        except PermissionError:
-            raise PermissionError(f"Permission denied: Cannot create output directory {output_dir}")
-    
-    if output_dir and not check_directory_permissions(output_dir, 'w'):
-        raise PermissionError(f"Permission denied: Cannot write to output directory {output_dir}")
+        title_elem = table.find('prism:Title', namespaces=ns)
+        title = title_elem.text if title_elem is not None else ""
+        conditions = get_condition1_from_table_name(title)
+
+        xcol = table.find('.//prism:XColumn', namespaces=ns)
+        xadcol = table.find('.//prism:XAdvancedColumn', namespaces=ns)
+        xsub = etree.SubElement(xcol, 'Subcolumn')
+        xadSub = etree.SubElement(xadcol, 'Subcolumn')
+        
+        for day in unique_list:
+            etree.SubElement(xsub, 'd').text = str(day)
+            etree.SubElement(xadSub, 'd').text = str(day)
+
+        ycols = table.findall('.//prism:YColumn', namespaces=ns)
+
+        idx = 0
+        for ycol in ycols:
+            for i in range(5):
+                ysub = etree.SubElement(ycol, 'Subcolumn')
+                
+            condition = conditions[f"y{idx + 1}"]
+            print(f"Processing YColumn {idx + 1} with condition: {condition}")
+            for day in unique_list:
+                for data in inputData:
+                    if data['day'] == day:
+                        for table_data in data['data']:
+                            print(f"Processing table: {table_data['tableName']} for day {day}")
+            idx += 1
+            # print(ycol.find('prism:Title', namespaces=ns).text)
+    # print(root.xpath('.//prism:Table', namespaces=ns))
+
+    # for table in root.findall('.//Table'):
+    #     title_elem = table.find('Title')
+    #     title = title_elem.text if title_elem is not None else ""
+    #     conditions = get_condition1_from_table_name(title)
+    #     print(f"Processing table: {title} with conditions: {conditions}")
+
+    return root
+
+
+
+def convert_progress(csv_dir, fruitname, update_progress):
+    """Convert CSV data to PZFX format with progress updates."""
+    if csv_dir and not check_directory_permissions(csv_dir, 'w'):
+        raise PermissionError(f"Permission denied: Cannot write to output directory {csv_dir}")
 
     # Simulate conversion process
     inputData = execute_csv(csv_dir)
 
-    process1(inputData, ge)
+    writing_pzfx(inputData, fruitname)
 
-    process2(inputData)
+    
+
+    # process1(inputData, ge)
+
+    # process2(inputData)
     # total_steps = 100
     # for step in range(total_steps):
     #     # Simulate some processing time
@@ -174,3 +215,4 @@ def convert_progress(pzfx_path, csv_dir, output_path, update_progress):
     
     # Finalize and save the output PZFX file
     # Here you would implement the actual logic to fill the PZFX with CSV data
+

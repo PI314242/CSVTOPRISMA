@@ -51,8 +51,20 @@ def is_file_in_use(file_path):
 
 def get_days(day_list):
 #    """Analyze the day from a list of strings."""
-    unique_list = list(set(day_list))
-    return unique_list
+
+    days = []
+    for day in day_list:
+        days.append(day["day"])
+    unique_list = list(set(days))
+    return days, unique_list
+
+    # days = []
+    # for day in day_list:
+    #     days.append(day["day"])
+    # print(f"Days found: {days}")
+    # unique_list = list(set(day_list))
+    # print(f"Unique days: {unique_list}")
+    # return days,unique_list
 
 # def find_order(day_value, day_list):
 #     if day_list.count(day_value) > 1:
